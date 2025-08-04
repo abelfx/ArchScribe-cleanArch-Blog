@@ -4,8 +4,10 @@ import (
 	"Blog/domain"
 	"Blog/usecases"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type BlogController struct {
@@ -18,12 +20,30 @@ func NewTaskController(u *usecases.BlogUsecase) *BlogController {
 
 // create a blog
 func (ctrl *BlogController) CreateBlog(c *gin.Context) {
-	var blog domain.Blog
+	var input struct {
+		Title   string             `json:"title"`
+		Content string             `json:"content"`
+		UserID  primitive.ObjectID `json:"user_id"`
+		Tags    []string           `json:"tags"`
+	}
 
-	if err := c.ShouldBindJSON(&blog); err != nil {
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	blog := domain.Blog{
+		ID:          primitive.NewObjectID(), 
+		Title:       input.Title,
+		Content:     input.Content,
+		UserID:      input.UserID,
+		Tags:        input.Tags,
+		Likes:       0,                      
+		Dislikes:    0,                      
+		ViewCount:   0,                      
+		DateCreated: time.Now(),            
+	}
+
 
 	CreatedBlog, err := ctrl.blogUsecase.CreateBlog(&blog)
 
@@ -32,7 +52,7 @@ func (ctrl *BlogController) CreateBlog(c *gin.Context) {
 	    return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "blog created successfullt", "Created_Blog": CreatedBlog})
+	c.JSON(http.StatusCreated, gin.H{"message": "blog created successfully", "Created_Blog": CreatedBlog})
 
 }
 
