@@ -14,7 +14,7 @@ type MongoBlogRepository struct {
 	col mongo.Collection
 }
 
-func NewBlogUsecase(col mongo.Collection) *MongoBlogRepository {
+func NewMongoBlogRepository(col mongo.Collection) *MongoBlogRepository {
 	return &MongoBlogRepository{col:col}
 }
 

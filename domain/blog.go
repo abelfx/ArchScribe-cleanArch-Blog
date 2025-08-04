@@ -25,9 +25,9 @@ type BlogRepository interface {
 	GetAllBlogs() ([]*Blog, error)
 	UpdateBlog(id primitive.ObjectID, blog *Blog) (*Blog, error)
 	DeleteBlog(id primitive.ObjectID) error
-	SearchBlog(id primitive.ObjectID) (*Blog, error)
-	FilterBlodgsByTag(tag string) ([]*Blog, error)
-	LikeBlog(id primitive.ObjectID) (*Blog, error)
-	DislikeBlog(id primitive.ObjectID) (*Blog, error)
-	ViewBlog(id primitive.ObjectID) (*Blog, error)
-}
+// 	SearchBlog(id primitive.ObjectID) (*Blog, error)
+// 	FilterBlodgsByTag(tag string) ([]*Blog, error)
+// 	LikeBlog(id primitive.ObjectID) (*Blog, error)
+// 	DislikeBlog(id primitive.ObjectID) (*Blog, error).Collection("blogs.Collection("blogs")")
+// 	ViewBlog(id primitive.ObjectID) (*Blog, error)
+ }
