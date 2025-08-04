@@ -23,8 +23,13 @@ func(u *BlogUsecase) CreateBlog(blog *domain.Blog) (*domain.Blog, error) {
 }
 
 // retrive a blog using its id
-func (u *BlogUsecase) GetBlogByID(id primitive.ObjectID) (*domain.Blog, error) {
-	return u.repo.GetBlogByID(id)
+func (u *BlogUsecase) GetBlogByID(id string) (*domain.Blog, error) {
+	ObjId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return nil, err
+	}
+	return u.repo.GetBlogByID(ObjId)
 }
 
 // retrive all blogs
@@ -33,11 +38,21 @@ func (u *BlogUsecase) GetAllBlogs() ([]*domain.Blog, error){
 }
 
 // update a blog using its id
-func ( u *BlogUsecase) UpdateBlog(id primitive.ObjectID, blog *domain.Blog) (*domain.Blog, error) {
-	return u.repo.UpdateBlog(id, blog)
+func ( u *BlogUsecase) UpdateBlog(id string, blog *domain.Blog) (*domain.Blog, error) {
+	ObjId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return nil, err
+	}
+	return u.repo.UpdateBlog(ObjId, blog)
 }
 
 // delete a blog using its id
-func ( u *BlogUsecase) DeleteBlog(id primitive.ObjectID) error {
-	return u.repo.DeleteBlog(id)
+func ( u *BlogUsecase) DeleteBlog(id string) error {
+	ObjId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return err
+	}
+	return u.repo.DeleteBlog(ObjId)
 }
