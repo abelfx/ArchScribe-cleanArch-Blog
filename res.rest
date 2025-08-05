@@ -1,0 +1,59 @@
+POST http://localhost:3000/blog
+Content-Type: application/json
+
+{
+  "title": "Understanding Clean Architecture in Go",
+  "content": "This blog post explores the principles of clean architecture and how to apply them in Go applications.",
+  "user_id": "64eabc0c6c7f4a76b6c133aa",
+  "tags": ["golang", "architecture", "backend"]
+}
+
+###
+PUT http://localhost:3000/blog/6890c2ddb4cccc6f10214d3c
+Content-Type: application/json
+
+{
+  "title": "what is go? why is go?",
+  "content": "This blog post explores the principles of clean architecture and how to apply them in Go applications.",
+  "user_id": "64eabc0c6c7f4a76b6c133aa",
+  "tags": ["banana", "apple", "brocolli"]
+
+}
+
+
+###
+DELETE http://localhost:8080/users/687e28154e45ffe7f6f7e3a1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTMzNTc2NTgsInVzZXJfaWQiOiI2ODdlMjhkMmRlODAzNWFkMzEzODI3MGMifQ.1CeMYtKE-yxgO8F0IwCJexfQ4Yt67m2NJDq4BuUnLNI
+
+
+###
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+{
+  "username": "Abee",
+  "email": "jomamahsd",
+  "password": "ABEBEBESOBELA"
+}
+
+###
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "username": "Abee",
+  "password": "ABEBEBESOBELA"
+}
+
+###
+POST http://localhost:3000/admin/users/promote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ2MzY1NzAsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.2Jwr8WdvpZV9fGzzQ3tnMTyDwl5l10ttVvyKCGCJ8BY
+Content-Type: application/json
+
+{
+  "user_id": "687e197d1ea9550200097d03",
+  "new_role": "admin"
+}
+
+###
+GET http://localhost:3000/users
