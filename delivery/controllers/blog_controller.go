@@ -20,10 +20,27 @@ func NewTaskController(u *usecases.BlogUsecase) *BlogController {
 
 // create a blog
 func (ctrl *BlogController) CreateBlog(c *gin.Context) {
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	userID, ok := userIDValue.(string)
+
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+	}
+
+	userId, err := primitive.ObjectIDFromHex(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+	}
+
+
 	var input struct {
 		Title   string             `json:"title"`
 		Content string             `json:"content"`
-		UserID  primitive.ObjectID `json:"user_id"`
 		Tags    []string           `json:"tags"`
 	}
 
@@ -32,11 +49,12 @@ func (ctrl *BlogController) CreateBlog(c *gin.Context) {
 		return
 	}
 
+	
 	blog := domain.Blog{
 		ID:          primitive.NewObjectID(), 
 		Title:       input.Title,
 		Content:     input.Content,
-		UserID:      input.UserID,
+		UserID:      userId,
 		Tags:        input.Tags,
 		Likes:       0,                      
 		Dislikes:    0,                      
