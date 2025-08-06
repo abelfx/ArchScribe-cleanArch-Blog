@@ -113,3 +113,43 @@ func (ctrl *UserController) DeleteUser(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "user deleted successfully"})
 }
+
+// change password
+type changePasswordRequest struct {
+    OldPassword string `json:"oldPassword" binding:"required"`
+    NewPassword string `json:"newPassword" binding:"required"`
+}
+
+func (ctrl *UserController) ChangePassword(c *gin.Context) {
+	id, exists := c.Get("userID")
+
+	if !exists {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user ID required"})
+		return
+	}
+	idStr, ok := id.(string)
+	if !ok || idStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user ID required"})
+		return
+	}
+
+	userID, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user id"})
+		return
+	}
+
+    var req changePasswordRequest
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+        return
+    }
+
+    err = ctrl.userUsecase.ChangePassword(userID, req.OldPassword, req.NewPassword)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "password changed successfully"})
+}

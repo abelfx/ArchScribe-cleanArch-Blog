@@ -17,4 +17,5 @@ type UserRepository interface {
 	GetAll() ([]*User, error)
 	PromoteUser(userID primitive.ObjectID, newRole string) error
 	DeleteByID(id primitive.ObjectID) error
+	ChangePassword(id primitive.ObjectID, oldPassword string, newPassword string) error
 }

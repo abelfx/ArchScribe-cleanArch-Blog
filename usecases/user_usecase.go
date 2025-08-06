@@ -41,3 +41,7 @@ func (u *UserUsecase) PromoteUser(userID primitive.ObjectID, newRole string) err
 func (u *UserUsecase) DeleteUserByID(id primitive.ObjectID) error {
 	return u.repo.DeleteByID(id)
 }
+
+func (u *UserUsecase) ChangePassword(id primitive.ObjectID, oldPassword string, newPassword string) error {
+	return u.repo.ChangePassword(id, oldPassword, newPassword)
+}

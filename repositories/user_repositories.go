@@ -5,6 +5,7 @@ import (
 	"Blog/infrastructure"
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -149,4 +150,39 @@ func (r *MongoUserRepository) DeleteByID(id primitive.ObjectID) error {
 		return errors.New("user not found")
 	}
 	return nil
+}
+
+
+func (r *MongoUserRepository) ChangePassword(id primitive.ObjectID, oldPassword string, newPassword string) error {
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+    // Step 1: Find the user by ID
+    var user struct {
+        Password string `bson:"password"`
+    }
+    err := r.Collection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
+    if err != nil {
+        return fmt.Errorf("user not found: %w", err)
+    }
+
+    // Step 2: Compare the old password with the stored hashed password
+    if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(oldPassword)); err != nil {
+        return errors.New("old password is incorrect")
+    }
+
+    // Step 3: Hash the new password
+    hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+    if err != nil {
+        return fmt.Errorf("failed to hash new password: %w", err)
+    }
+
+    // Step 4: Update the password in the database
+    update := bson.M{"$set": bson.M{"password": string(hashedNewPassword)}}
+    _, err = r.Collection.UpdateByID(ctx, id, update)
+    if err != nil {
+        return fmt.Errorf("error updating password: %w", err)
+    }
+
+    return nil
 }
