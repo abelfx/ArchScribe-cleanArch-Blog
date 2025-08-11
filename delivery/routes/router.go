@@ -15,6 +15,9 @@ func SetUpRouter(blogCtrl *controllers.BlogController, userCtrl *controllers.Use
 	authRouter := r.Group("/auth")
 	authRouter.POST("/signup", userCtrl.Signup)
 	authRouter.POST("/login", userCtrl.Login)
+	authRouter.POST("/forgot-password", userCtrl.ForgotPassword)
+	authRouter.POST("/reset-password", userCtrl.ResetPassword)
+	authRouter.POST("/logout", infrastructure.AuthMiddleware(), userCtrl.Logout)
 
 	// admin routers (required authentication and admin role)
 	adminRouter := r.Group("/admin")

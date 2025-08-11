@@ -186,3 +186,71 @@ func (r *MongoUserRepository) ChangePassword(id primitive.ObjectID, oldPassword 
 
     return nil
 }
+
+func (r *MongoUserRepository) SetResetToken(email, token string, expiry time.Time) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	update := bson.M{
+		"$set": bson.M{
+			"resetToken":       token,
+			"resetTokenExpiry": expiry,
+		},
+	}
+	res, err := r.Collection.UpdateOne(ctx, bson.M{"email": email}, update)
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount == 0 {
+		return errors.New("email not found")
+	}
+	return nil
+}
+
+func (r *MongoUserRepository) ResetPasswordUsingToken(token, newPassword string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var user domain.User
+	err := r.Collection.FindOne(ctx, bson.M{
+		"resetToken": token,
+		"resetTokenExpiry": bson.M{"$gt": time.Now()},
+	}).Decode(&user)
+	if err != nil {
+		return errors.New("invalid or expired reset token")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	update := bson.M{
+		"$set": bson.M{
+			"password":         string(hashedPassword),
+			"resetToken":       "",
+			"resetTokenExpiry": time.Time{},
+		},
+	}
+	_, err = r.Collection.UpdateByID(ctx, user.ID, update)
+	return err
+}
+
+func (r *MongoUserRepository) ClearTokens(userID primitive.ObjectID) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	update := bson.M{
+		"$set": bson.M{
+			"resetToken":       "",
+			"resetTokenExpiry": time.Time{},
+		},
+	}
+
+	_, err := r.Collection.UpdateByID(ctx, userID, update)
+	if err != nil {
+		return fmt.Errorf("failed to clear tokens: %w", err)
+	}
+
+	return nil
+}
