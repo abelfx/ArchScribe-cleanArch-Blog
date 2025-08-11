@@ -141,3 +141,115 @@ func(ctrl *BlogController) DeleteBlog(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "blog deleted successfully"})
 } 
+
+// Like blog
+func (ctrl *BlogController) LikeBlog(c *gin.Context) {
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	userID, ok := userIDValue.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	blogID := c.Param("id")
+	if blogID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "blog id required"})
+		return
+	}
+
+	if err := ctrl.blogUsecase.LikeBlog(userID, blogID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Blog liked"})
+}
+
+// Dislike blog
+func (ctrl *BlogController) DislikeBlog(c *gin.Context) {
+	userIDValue, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	userID, ok := userIDValue.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	blogID := c.Param("id")
+	if blogID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "blog id required"})
+		return
+	}
+
+	if err := ctrl.blogUsecase.DislikeBlog(userID, blogID); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Blog disliked"})
+}
+
+// Filter blogs
+func (ctrl *BlogController) FilterBlogs(c *gin.Context) {
+	var body struct {
+		Tags   []string `json:"tags"`
+		Start  string   `json:"start"` // ISO8601
+		End    string   `json:"end"`   // ISO8601
+		SortBy string   `json:"sort_by"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var start *time.Time
+	var end *time.Time
+	if body.Start != "" {
+		st, err := time.Parse(time.RFC3339, body.Start)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid start date"})
+			return
+		}
+		start = &st
+	}
+	if body.End != "" {
+		en, err := time.Parse(time.RFC3339, body.End)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid end date"})
+			return
+		}
+		end = &en
+	}
+
+	blogs, err := ctrl.blogUsecase.FilterBlogs(body.Tags, start, end, body.SortBy)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, blogs)
+}
+
+// // AI Suggestion endpoint
+// func (ctrl *BlogController) SuggestBlogContent(c *gin.Context) {
+// 	var body struct {
+// 		Topic string `json:"topic" binding:"required"`
+// 	}
+// 	if err := c.ShouldBindJSON(&body); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	suggestion, err := ctrl.blogUsecase.SuggestContent(body.Topic)
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"suggestion": suggestion})
+// }
