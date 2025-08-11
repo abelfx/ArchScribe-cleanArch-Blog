@@ -236,20 +236,20 @@ func (ctrl *BlogController) FilterBlogs(c *gin.Context) {
 	c.JSON(http.StatusOK, blogs)
 }
 
-// // AI Suggestion endpoint
-// func (ctrl *BlogController) SuggestBlogContent(c *gin.Context) {
-// 	var body struct {
-// 		Topic string `json:"topic" binding:"required"`
-// 	}
-// 	if err := c.ShouldBindJSON(&body); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-// 		return
-// 	}
+func (ctrl *BlogController) SuggestBlog(c *gin.Context) {
+    var req struct {
+        Prompt string `json:"prompt"`
+    }
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-// 	suggestion, err := ctrl.blogUsecase.SuggestContent(body.Topic)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 		return
-// 	}
-// 	c.JSON(http.StatusOK, gin.H{"suggestion": suggestion})
-// }
+    suggestion, err := ctrl.blogUsecase.SuggestContent(req.Prompt)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"suggestion": suggestion})
+}

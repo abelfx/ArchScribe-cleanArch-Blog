@@ -61,3 +61,4 @@ func (u *UserUsecase) Logout(userID primitive.ObjectID) error {
 	// If you store tokens in DB, delete them here
 	return u.repo.ClearTokens(userID)
 }
+

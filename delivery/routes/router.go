@@ -37,7 +37,7 @@ func SetUpRouter(blogCtrl *controllers.BlogController, userCtrl *controllers.Use
 	blogRouter.POST("/:id/like",infrastructure.AuthMiddleware(), blogCtrl.LikeBlog)
 	blogRouter.POST("/:id/dislike", infrastructure.AuthMiddleware(),blogCtrl.DislikeBlog)
 	blogRouter.POST("/filter", blogCtrl.FilterBlogs)
-	// blogRouter.POST("/blogs/ai-suggest", blogCtrl.SuggestBlogContent)
+	blogRouter.POST("/suggest", infrastructure.AuthMiddleware(), blogCtrl.SuggestBlog)
 
 	return r
 }

@@ -8,6 +8,8 @@ import (
 	"Blog/repositories"
 	"Blog/usecases"
 	"log"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -17,25 +19,32 @@ func main() {
 		log.Println("Error connecting to the database")
 	}
 
-	// initialize collection
+	err = godotenv.Load()
+	if err != nil {
+		log.Println("Warning: .env file not found, relying on system environment variables")
+}
+	// initialize collections
 	blogCollection := client.Database("Blog").Collection("blogs")
 	userCollection := client.Database("User").Collection("users")
 
-	// initialize Repository
+	// initialize repositories
 	var blogRepo domain.BlogRepository = repositories.NewMongoBlogRepository(*blogCollection)
 	var userRepo domain.UserRepository = repositories.NewMongoUserRepository(userCollection)
 
-	// initialzie Usecase
-	blogUsecase := usecases.NewBlogUsecase(blogRepo)
+	// initialize AI service
+	var aiService domain.AIService = infrastructure.NewMistralAIService()
+
+	// initialize usecases
+	blogUsecase := usecases.NewBlogUsecase(blogRepo, aiService)
 	userUsecase := usecases.NewUserUsecase(userRepo)
 
-	// initialize Controller
+	// initialize controllers
 	blogController := controllers.NewTaskController(blogUsecase)
 	userController := controllers.NewUserController(userUsecase)
 
+	// setup router
 	r := routes.SetUpRouter(blogController, userController, userUsecase)
 
 	// start server
 	r.Run(":3000")
-
 }

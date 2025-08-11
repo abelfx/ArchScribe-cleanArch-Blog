@@ -19,7 +19,7 @@ type MongoUserRepository struct {
 }
 
 func NewMongoUserRepository(col *mongo.Collection) domain.UserRepository {
-	return &MongoUserRepository{Collection: col}
+	return &MongoUserRepository{Collection: col, }
 }
 
 func (r *MongoUserRepository) Create(user *domain.User) (primitive.ObjectID, error) {
@@ -236,6 +236,7 @@ func (r *MongoUserRepository) ResetPasswordUsingToken(token, newPassword string)
 	return err
 }
 
+// ClearTokens removes reset tokens and their expiry for a user by ID.
 func (r *MongoUserRepository) ClearTokens(userID primitive.ObjectID) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -246,11 +247,6 @@ func (r *MongoUserRepository) ClearTokens(userID primitive.ObjectID) error {
 			"resetTokenExpiry": time.Time{},
 		},
 	}
-
 	_, err := r.Collection.UpdateByID(ctx, userID, update)
-	if err != nil {
-		return fmt.Errorf("failed to clear tokens: %w", err)
-	}
-
-	return nil
+	return err
 }
