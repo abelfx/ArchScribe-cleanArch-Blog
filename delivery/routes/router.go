@@ -22,7 +22,7 @@ func SetUpRouter(blogCtrl *controllers.BlogController, userCtrl *controllers.Use
 	// admin routers (required authentication and admin role)
 	adminRouter := r.Group("/admin")
 	adminRouter.Use(infrastructure.AuthMiddleware())
-	adminRouter.Use(infrastructure.AdminOnly(useCase))
+	// adminRouter.Use(infrastructure.AdminOnly(useCase))
 	adminRouter.GET("/users", userCtrl.GetUsers)
 	adminRouter.POST("/users/promote", userCtrl.PromoteUser)
 	adminRouter.DELETE("/users/:id", userCtrl.DeleteUser)
