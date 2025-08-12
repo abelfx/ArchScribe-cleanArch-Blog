@@ -253,3 +253,28 @@ func (ctrl *BlogController) SuggestBlog(c *gin.Context) {
 
     c.JSON(http.StatusOK, gin.H{"suggestion": suggestion})
 }
+
+// blog_controller.go
+
+func (ctrl *BlogController) SearchBlog(c *gin.Context) {
+    var body struct {
+        Title string `json:"title"`
+    }
+    if err := c.ShouldBindJSON(&body); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+
+    if body.Title == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "title is required"})
+        return
+    }
+
+    blog, err := ctrl.blogUsecase.SearchBlog(body.Title)
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "blog not found"})
+        return
+    }
+
+    c.JSON(http.StatusOK, blog)
+}

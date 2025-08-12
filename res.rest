@@ -20,6 +20,20 @@ Content-Type: application/json
 
 }
 
+###
+GET http://localhost:3000/blog/6899b1e781cc769d421a345c
+
+###
+DELETE http://localhost:3000/blog/6899b1e781cc769d421a345c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTUyNTYyMDQsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.NRcS6-CaKegJAkVTMqF99wGe7E29F1eMzgbcar2qIgc
+
+###
+GET http://localhost:3000/blog/search
+Content-Type: application/json
+
+{
+  "title": "what is go? why is go?"
+}
 
 ###
 DELETE http://localhost:8080/users/687e28154e45ffe7f6f7e3a1
@@ -46,14 +60,55 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/admin/users/promote
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTQ2MzY1NzAsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.2Jwr8WdvpZV9fGzzQ3tnMTyDwl5l10ttVvyKCGCJ8BY
+POST http://localhost:3000/auth/forgot-password
 Content-Type: application/json
 
 {
-  "user_id": "687e197d1ea9550200097d03",
+  "email": "abeltesfa198@gmail.com"
+}
+
+###
+POST http://localhost:3000/auth/reset-password
+Content-Type: application/json
+
+{
+  "Token": "689b244f1e628a0e111c751e",
+  "NewPassword": "abebe"
+}
+
+###
+POST http://localhost:3000/admin/users/promote
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTUyNTYzMTcsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.3CHo1voXKdp0mViGAUVD1m8PnPWqWKtW1Ot1j2EeMaw
+Content-Type: application/json
+
+{
+  "user_id": "6899a6cf3702a4dc19bced22",
   "new_role": "admin"
 }
 
 ###
-GET http://localhost:3000/users
+GET http://localhost:3000/admin/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTUyNTYzMTcsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.3CHo1voXKdp0mViGAUVD1m8PnPWqWKtW1Ot1j2EeMaw
+
+###
+POST http://localhost:3000/blog/6899b1f081cc769d421a345d/dislike
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTUyNTYzMTcsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.3CHo1voXKdp0mViGAUVD1m8PnPWqWKtW1Ot1j2EeMaw
+
+
+###
+POST http://localhost:3000/blog/filter
+Content-Type: application/json
+
+{
+  "tags": ["banana"],
+  "sort_by": "date"  
+}
+
+###
+POST http://localhost:3000/blog/suggest
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTUyNTYzMTcsInVzZXJfaWQiOiI2ODkxYWM4NzNhY2U4M2M4NzFjZjRhZWQifQ.3CHo1voXKdp0mViGAUVD1m8PnPWqWKtW1Ot1j2EeMaw
+Content-Type: application/json
+
+{
+  "prompt": "Write a blog introduction about modern web development trends."
+}

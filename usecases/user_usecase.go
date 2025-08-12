@@ -48,7 +48,7 @@ func (u *UserUsecase) ChangePassword(id primitive.ObjectID, oldPassword string, 
 }
 
 func (u *UserUsecase) ForgotPassword(email string) error {
-	token := primitive.NewObjectID().Hex() // Could use UUID for better randomness
+	token := primitive.NewObjectID().Hex() 
 	expiry := time.Now().Add(1 * time.Hour)
 	return u.repo.SetResetToken(email, token, expiry)
 }
@@ -58,7 +58,6 @@ func (u *UserUsecase) ResetPassword(token, newPassword string) error {
 }
 
 func (u *UserUsecase) Logout(userID primitive.ObjectID) error {
-	// If you store tokens in DB, delete them here
 	return u.repo.ClearTokens(userID)
 }
 

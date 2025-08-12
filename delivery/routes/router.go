@@ -33,6 +33,7 @@ func SetUpRouter(blogCtrl *controllers.BlogController, userCtrl *controllers.Use
 	blogRouter.PUT("/:id", infrastructure.AuthMiddleware(), blogCtrl.UpdateBlog)
 	blogRouter.GET("/:id", blogCtrl.GetBlog)
 	blogRouter.GET("/", blogCtrl.GetBlogs)
+	blogRouter.POST("/blogs/search", blogCtrl.SearchBlog)
 	blogRouter.DELETE("/:id", infrastructure.AuthMiddleware(), blogCtrl.DeleteBlog)
 	blogRouter.POST("/:id/like",infrastructure.AuthMiddleware(), blogCtrl.LikeBlog)
 	blogRouter.POST("/:id/dislike", infrastructure.AuthMiddleware(),blogCtrl.DislikeBlog)

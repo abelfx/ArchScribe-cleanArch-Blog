@@ -282,3 +282,22 @@ func (r *MongoBlogRepository) FilterBlogs(tags []string, startDate, endDate *tim
 
 	return blogs, nil
 }
+
+func (r *MongoBlogRepository) SearchBlog(title string) (*domain.Blog, error) {
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+
+    filter := bson.M{
+        "title": bson.M{
+            "$regex":   title,
+            "$options": "i", // case-insensitive
+        },
+    }
+
+    var blog domain.Blog
+    err := r.col.FindOne(ctx, filter).Decode(&blog)
+    if err != nil {
+        return nil, err
+    }
+    return &blog, nil
+}

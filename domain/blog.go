@@ -35,6 +35,7 @@ type BlogRepository interface {
 	GetAllBlogs() ([]*Blog, error)
 	UpdateBlog(id primitive.ObjectID, blog *Blog) (*Blog, error)
 	DeleteBlog(id primitive.ObjectID) error
+	SearchBlog(title string) (*Blog, error)
 
 	// Popularity tracking
 	LikeBlog(userID, blogID primitive.ObjectID) error

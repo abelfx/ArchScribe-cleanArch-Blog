@@ -93,3 +93,7 @@ func (u *BlogUsecase) FilterBlogs(tags []string, start, end *time.Time, sortBy s
 func (u *BlogUsecase) SuggestContent(prompt string) (string, error) {
     return u.aiService.Suggest(prompt)
 }
+
+func (u *BlogUsecase) SearchBlog(title string) (*domain.Blog, error) {
+    return u.repo.SearchBlog(title)
+}
